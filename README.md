@@ -1,2 +1,2 @@
 # happystudy
-算法之美
+The beauty of algorithms
