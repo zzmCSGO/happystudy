@@ -22,23 +22,23 @@ public class Two {
     }
 
     public List<List<Integer>> levelOrder(TreeNode root) {
-        TreeNode node=root;
-        if(node==null){
+        TreeNode node = root;
+        if (node == null) {
             return new ArrayList<>();
         }
-        Queue<TreeNode> queue=new LinkedList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(node);
-        List<List<Integer>> res=new ArrayList<>();
-        while(!queue.isEmpty()){
-            int size=queue.size();
-            List<Integer> temp=new ArrayList<>();
-            for(int i=0;i<size;i++){
-                TreeNode poll=queue.poll();
+        List<List<Integer>> res = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            List<Integer> temp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode poll = queue.poll();
                 temp.add(poll.val);
-                if(poll.left!=null){
+                if (poll.left != null) {
                     queue.offer(poll.left);
                 }
-                if(poll.right!=null){
+                if (poll.right != null) {
                     queue.offer(poll.right);
                 }
             }

@@ -2,6 +2,7 @@ package com.zzm.hot100.hundred;
 
 import com.zzm.structure.binarytree.TreeNode;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 //95. 不同的二叉搜索树 II
 public class NinetyFive {
     public static void main(String[] args) {
+        ArrayList<Integer> nums = new ArrayList<>();
 //        for (TreeNode generateTree : new NinetyFive().generateTrees(3)) {
 //
 //        }
