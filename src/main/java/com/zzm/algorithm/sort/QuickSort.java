@@ -10,41 +10,41 @@ package com.zzm.algorithm.sort;
  */
 public class QuickSort {
 
-    private static void quick(int [] a,int left,int right){
-        if(left>=right){
+    private static void quick(int[] a, int left, int right) {
+        if (left >= right) {
             return;
         }
-        int p=partition(a,left,right);
-        quick(a,left,p-1);
-        quick(a,p+1,right);
+        int p = partition(a, left, right);
+        quick(a, left, p - 1);
+        quick(a, p + 1, right);
     }
 
     private static int partition(int[] a, int left, int right) {
-        int pv=a[right];//基准点元素的值
-        int i=left;
-        int j=left;
-        while(j<right){
-            if(a[j]<pv){//j找到比基准点小的了,
-                if(i!=j){
-                    swap(a,i,j);
+        int pv = a[right];//基准点元素的值
+        int i = left;
+        int j = left;
+        while (j < right) {
+            if (a[j] < pv) {//j找到比基准点小的了,
+                if (i != j) {
+                    swap(a, i, j);
                 }
                 i++;//i没有找到比基准点大的，所以i++
             }
             j++;
         }
-        swap(a,i,right);
+        swap(a, i, right);
         return i;
     }
 
     private static void swap(int[] a, int i, int j) {
-        int temp=a[i];
-        a[i]=a[j];
-        a[j]=temp;
+        int temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
     }
 
     public static void main(String[] args) {
-        int[] a={1,3,5,2,2};
-        quick(a,0,4);
+        int[] a = {1, 3, 5, 2, 2};
+        quick(a, 0, 4);
         System.out.println(1);
     }
 }

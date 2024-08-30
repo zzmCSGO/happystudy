@@ -1,5 +1,6 @@
 package com.zzm.structure.list;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -63,8 +64,8 @@ public class LinkedListTest {
             i++;
         }
         long timeEnd=System.currentTimeMillis();
-
-        System.out.println("LinkedList从集合尾部位置新增元素花费的时间"+(timeEnd-timeStart));
+        ArrayList<String> arrayList=new ArrayList<>(list);
+        System.out.println("LinkedList从集合尾部位置新增元素花费的时间" + (timeEnd-timeStart));
     }
 
     /**
