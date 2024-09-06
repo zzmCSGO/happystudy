@@ -1,0 +1,1257 @@
+Index: src/main/java/com/zzm/hot100/sixty/FiftySix.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.sixty;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Comparator;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.sixty\n * @Author: zzm\n * @CreateTime: 2024-02-19  23:25\n * @Description: TODO\n * @Version: 1.0\n */\n//56.合并区间\npublic class FiftySix {\n    public static void main(String[] args) {\n        FiftySix fiftySix = new FiftySix();\n        int[][] intervals = {{1,3},{2,6},{8,10},{15,18}};\n        int[][] merge = fiftySix.merge(intervals);\n        System.out.println(merge);\n    }\n\n        public int[][] merge(int[][] intervals) {\n            if (intervals.length == 0) {\n                return new int[0][2];\n            }\n            //二维数组按照区间起始位置排序\n            Arrays.sort(intervals, new Comparator<int[]>() {\n                public int compare(int[] interval1, int[] interval2) {\n                    return interval1[0] - interval2[0];\n                }\n            });\n            List<int[]> merged = new ArrayList<int[]>();\n            for (int i = 0; i < intervals.length; ++i) {\n                //第i个区间的：L：左边界，R：右边界\n                int L = intervals[i][0], R = intervals[i][1];\n                //merged为空或者merged最后一个区间的右边界小于L\n                if (merged.size() == 0 || merged.get(merged.size() - 1)[1] < L) {\n                    merged.add(new int[]{L, R});\n                } else {\n                    //merged最后一个区间的右边界大于等于L，合并区间：merged最后一个区间的右边界更新为R和merged最后一个区间的右边界的最大值\n                    merged.get(merged.size() - 1)[1] = Math.max(merged.get(merged.size() - 1)[1], R);\n                }\n            }\n            return merged.toArray(new int[merged.size()][]);\n        }\n\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/sixty/FiftySix.java b/src/main/java/com/zzm/hot100/sixty/FiftySix.java
+--- a/src/main/java/com/zzm/hot100/sixty/FiftySix.java	
++++ b/src/main/java/com/zzm/hot100/sixty/FiftySix.java	
+@@ -27,11 +27,7 @@
+                 return new int[0][2];
+             }
+             //二维数组按照区间起始位置排序
+-            Arrays.sort(intervals, new Comparator<int[]>() {
+-                public int compare(int[] interval1, int[] interval2) {
+-                    return interval1[0] - interval2[0];
+-                }
+-            });
++            Arrays.sort(intervals, Comparator.comparingInt(interval -> interval[0]));
+             List<int[]> merged = new ArrayList<int[]>();
+             for (int i = 0; i < intervals.length; ++i) {
+                 //第i个区间的：L：左边界，R：右边界
+Index: src/main/java/com/zzm/hot100/twenty/Fifteen.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.twenty;\n\nimport java.util.*;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-14  11:21\n * @Description: TODO\n * @Version: 1.0\n */\n\n//三数之和\npublic class Fifteen {\n    public static void main(String[] args) {\n\n        int [] nums={1,0,-1,0,-2,2};\n;\n//        List<Integer> list=new ArrayList<>();\n//        System.out.println(list);\n        System.out.println(plus(nums));\n\n    }\n\n    //超时方法，但是可行\n    public List<List<Integer>> threeSum(int[] nums) {\n\n        HashMap<Integer,Integer> map=new HashMap();\n        List<List<Integer>> list=new ArrayList<>();\n        //不重复指数据下标不重复\n        //选出的对应下面的三个数字相加为0\n        int length=nums.length;\n        for(int i=0;i<length;i++){\n            //遍历的第一个数字nums[i]\n            //变成两数之和的问题\n            for(int j=0;j<length;j++){\n                //遍历不重复下标的第二个\n                if(i!=j){\n                    map.put(j,nums[j]);\n                    for(int k=0;k<length;k++){\n                        //先当成两数之和\n                        if(k!=j&&k!=i){\n                            if(nums[k]+nums[j]+nums[i]==0){\n                                //找到了\n                                List<Integer> arr=new ArrayList<>();\n                                arr.add(nums[i]);\n                                arr.add(nums[j]);\n                                arr.add(nums[k]);\n                                //将arr这整个数组放入list中\n                                list.add(arr);\n                            }\n                        }\n                    }\n                }\n            }\n        }\n        //去重\n        HashSet<List<Integer>> set=new HashSet<>();\n        //将list中的每个数组中的元素进行排序\n        list.forEach(item->{\n            //item://[1, 0, -1]\n            item.sort((o1, o2) -> o1-o2);\n            set.add(item);\n        });\n        //将set中的元素放入list中\n        list.clear();\n        list.addAll(set);\n        if(list.size()==0){\n            return new ArrayList<>();\n        }\n        return list;\n\n    }\n\n    public static List<List<Integer>> plus(int[] nums) {\n        //数组排序\n        Arrays.sort(nums);\n        List<List<Integer>> result=new ArrayList<>();\n        LinkedList<Integer> stack=new LinkedList<>();\n        int right=nums.length-1;\n        int left=0;\n\n        dfs(4,left,right,0,nums,stack,result);\n        return result;\n    }\n\n    //n代表数字的个数，固定一个数字让n-1,什么时候n变为2了，就是两数之和的问题了\n    static void dfs(int n,int i,int j,int target,int [] nums,LinkedList<Integer> stack,List<List<Integer>> result){\n\n        if(n==2){\n            //两数之和\n            twoSum(i,j,nums,target,stack,result);\n            return ;\n\n        }\n        for (int k = i; k <j-(n-2) ; k++) { //k代表固定的数字，四数之和可以i<j-2,三数之和可以i<j-1\n            //检查左边界是否重复,防止越界，第一个数字不用检查重复\n            if(k>i&&nums[k]==nums[k-1]){\n                //当前数字等于上一个数字，跳过该数字，尝试下一个数字\n                continue;\n            }\n            //固定一个数字，再尝试n-1数字之和\n            stack.push(nums[k]);\n            dfs(n-1,k+1,j,target-nums[k],nums,stack,result);\n            //固定的数字遍历之后，弹出\n            stack.pop();\n        }\n\n    }\n\n    static public void twoSum(int i,int j,int[] nums, int target,LinkedList<Integer> stack,List<List<Integer>> result) {\n        while(i<j){\n            int sum=nums[i]+nums[j];\n            if(sum<target){\n                i++;\n            }else if(sum>target){\n                j--;\n            }else{\n                //找到解\n                ArrayList<Integer> list = new ArrayList<>(stack);//固定的数字\n                list.add(nums[i]);\n                list.add(nums[j]);\n                result.add(list);\n                //继续查找其它的解，缩小范围\n                i++;\n                j--;\n                while (i<j&&nums[i]==nums[i-1]){\n                    i++;\n                }\n            }\n        }\n    }\n\n\n    static public int[] twoSumDemo(int[] nums, int target) {\n        //有序数组 nums\n        int i=0;\n        int j=nums.length-1;\n        while(i<j){\n            int sum=nums[i]+nums[j];\n            if(sum<target){\n                i++;\n            }else if(sum>target){\n                j--;\n            }else{\n                //找到解\n                return new int[]{nums[i],nums[j]};\n            }\n        }\n        return new int[]{};\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/twenty/Fifteen.java b/src/main/java/com/zzm/hot100/twenty/Fifteen.java
+--- a/src/main/java/com/zzm/hot100/twenty/Fifteen.java	
++++ b/src/main/java/com/zzm/hot100/twenty/Fifteen.java	
+@@ -15,7 +15,7 @@
+ public class Fifteen {
+     public static void main(String[] args) {
+ 
+-        int [] nums={1,0,-1,0,-2,2};
++        int [] nums={1,3,2};
+ ;
+ //        List<Integer> list=new ArrayList<>();
+ //        System.out.println(list);
+@@ -81,7 +81,7 @@
+         int right=nums.length-1;
+         int left=0;
+ 
+-        dfs(4,left,right,0,nums,stack,result);
++        dfs(3,left,right,0,nums,stack,result);
+         return result;
+     }
+ 
+Index: src/main/java/com/zzm/structure/binarytree/TreeTraversal.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.structure.binarytree;\n\nimport java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.structure.binarytree\n * @Author: zzm\n * @CreateTime: 2024-01-18  12:02\n * @Description: TODO\n * @Version: 1.0\n */\npublic class TreeTraversal {\n\n    public static void main(String[] args) {\n        TreeNode root=new TreeNode(\n                new TreeNode(new TreeNode(4),2,null),\n                1,\n                new TreeNode(new TreeNode(5),3,new TreeNode(6))\n        );\n//        preOrder(root);\n//        inOrder(root);\n\n//        postOrder(root);\n        nonRecOrder(root);\n        System.out.println(\"==================================\");\n\n    }\n\n\n    //前序遍历\n    static void preOrder(TreeNode node){\n        //如果传过来的节点是空，那么直接返回\n        if(node==null){\n            return;\n        }\n        //调用规则都一样，所以采用递归遍历即可\n        System.out.println(node.val+\"\\t\");//值\n        preOrder(node.left);//左\n        preOrder(node.right);//右\n    }\n\n    //中序遍历\n    static void inOrder(TreeNode node){\n        if(node==null){\n            return;\n        }\n        inOrder(node.left);//先访问左子树\n        System.out.println(node.val+\"\\t\");//访问当前节点的值\n        inOrder(node.right);//再访问右子树\n    }\n\n    //后序遍历\n    static void postOrder(TreeNode node){\n        if(node==null){\n            return;\n        }\n        postOrder(node.left);\n        postOrder(node.right);\n        System.out.println(node.val+\"\\t\");\n    }\n\n    //非递归出发点：节点的遍历路径是一致的。\n    //非递归前序，中序遍历\n    public void nonRecPreInOrder(TreeNode root){\n        //用栈结构来存储走过的节点,记住回来的路（父亲节点)\n        LinkedList<TreeNode> stack=new LinkedList<>();\n        TreeNode curr=root;//代表的是当前节点\n        while(curr!=null||!stack.isEmpty()){\n            if(curr!=null){\n                System.out.println(\"去\"+curr.val+\"\\t\"); //前序遍历\n                stack.push(curr);//压入栈，记录回来的路径\n                curr=curr.left;\n            }else{\n                //如果当前节点为空，那么就弹出栈顶元素\n                curr=stack.pop();\n                System.out.println(\"回\"+curr.val+\"\\t\"); //中序遍历\n                curr=curr.right;\n            }\n        }\n    }\n\n    //非递归后序遍历\n    public static void nonRecPostOrder(TreeNode root){\n        //用栈结构来存储走过的节点,记住回来的路（父亲节点)\n        LinkedList<TreeNode> stack=new LinkedList<>();\n        TreeNode curr=root;//代表的是当前节点\n        TreeNode pop=null;//记录最近一次弹栈的元素\n        while(curr!=null||!stack.isEmpty()){\n            if(curr!=null){\n//                System.out.println(\"去\"+curr.val+\"\\t\");\n                stack.push(curr);//压入栈，记录回来的路径\n                curr=curr.left;\n            }else{\n                TreeNode peek=stack.peek();//栈顶元素\n                //peek.right==pop：代表的是右子树已经处理完成\n                if(peek.right==null || peek.right==pop){\n                    //右子树处理完成\n                     pop=stack.pop();\n                    System.out.println(\"回\"+pop.val+\"\\t\");\n                }else{\n                    curr=peek.right;\n                }\n\n            }\n        }\n    }\n\n    //前序遍历：在待处理右子树之前进行打印，中序遍历：在左子树处理之后，右子树处理之前进行打印，右子树为空也需要打印。\n    //后序遍历：在处理右子树之后进行打印。\n    //非递归遍历模板代码，前中后\n    public static void nonRecOrder(TreeNode root){\n        //用栈结构来存储走过的节点,记住回来的路（父亲节点)\n        LinkedList<TreeNode> stack=new LinkedList<>();\n        TreeNode curr=root;//代表的是当前节点\n        TreeNode pop=null;//记录最近一次弹栈的元素\n        while(curr!=null||!stack.isEmpty()){\n            if(curr!=null){\n                //压入栈，记录回来的路径\n                stack.push(curr);\n                System.out.println(\"前\"+curr.val+\"\\t\");\n                //待处理左子树\n                curr=curr.left;\n            }else{\n                TreeNode peek=stack.peek();//栈顶元素\n                if(peek.right==null){ //没有右子树\n                    System.out.println(\"中\"+peek.val+\"\\t\");\n                    pop=stack.pop();\n                    System.out.println(\"后\"+pop.val+\"\\t\");\n                }else if(peek.right==pop){//右子树处理完成\n                    pop=stack.pop();\n                    System.out.println(\"后\"+pop.val+\"\\t\");\n                }else{//待处理右子树\n                    System.out.println(\"中\"+peek.val+\"\\t\");\n                    curr=peek.right;\n                }\n\n            }\n        }\n    }\n\n\n\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/structure/binarytree/TreeTraversal.java b/src/main/java/com/zzm/structure/binarytree/TreeTraversal.java
+--- a/src/main/java/com/zzm/structure/binarytree/TreeTraversal.java	
++++ b/src/main/java/com/zzm/structure/binarytree/TreeTraversal.java	
+@@ -9,99 +9,134 @@
+  * @BelongsPackage: com.zzm.structure.binarytree
+  * @Author: zzm
+  * @CreateTime: 2024-01-18  12:02
+- * @Description: TODO
++ * @Description: 前：root->left->right  中：left->root->right  后：left->right->root
+  * @Version: 1.0
+  */
+ public class TreeTraversal {
+-
++//前序遍历是在去的时候打印，中是在后回来的时候打印
+     public static void main(String[] args) {
+-        TreeNode root=new TreeNode(
+-                new TreeNode(new TreeNode(4),2,null),
++        TreeNode root = new TreeNode(
++                new TreeNode(new TreeNode(4), 2, null),
+                 1,
+-                new TreeNode(new TreeNode(5),3,new TreeNode(6))
++                new TreeNode(new TreeNode(5), 3, new TreeNode(6))
+         );
+ //        preOrder(root);
+ //        inOrder(root);
+-
++//        nonRecPreInOrder(root);
+ //        postOrder(root);
+-        nonRecOrder(root);
++//        nonRecOrder(root);
++        morrisInOrder(root);
+         System.out.println("==================================");
+ 
+     }
+ 
+ 
+     //前序遍历
+-    static void preOrder(TreeNode node){
++    static void preOrder(TreeNode node) {
+         //如果传过来的节点是空，那么直接返回
+-        if(node==null){
++        if (node == null) {
+             return;
+         }
+         //调用规则都一样，所以采用递归遍历即可
+-        System.out.println(node.val+"\t");//值
++        System.out.println(node.val + "\t");//值
+         preOrder(node.left);//左
+         preOrder(node.right);//右
+     }
+ 
+     //中序遍历
+-    static void inOrder(TreeNode node){
+-        if(node==null){
++    static void inOrder(TreeNode node) {
++        if (node == null) {
+             return;
+         }
+         inOrder(node.left);//先访问左子树
+-        System.out.println(node.val+"\t");//访问当前节点的值
++        System.out.println(node.val + "\t");//访问当前节点的值
+         inOrder(node.right);//再访问右子树
+     }
+ 
+     //后序遍历
+-    static void postOrder(TreeNode node){
+-        if(node==null){
++    static void postOrder(TreeNode node) {
++        if (node == null) {
+             return;
+         }
+         postOrder(node.left);
+         postOrder(node.right);
+-        System.out.println(node.val+"\t");
++        System.out.println(node.val + "\t");
+     }
+ 
+     //非递归出发点：节点的遍历路径是一致的。
+     //非递归前序，中序遍历
+-    public void nonRecPreInOrder(TreeNode root){
++    public static void nonRecPreInOrder(TreeNode root) {
+         //用栈结构来存储走过的节点,记住回来的路（父亲节点)
+-        LinkedList<TreeNode> stack=new LinkedList<>();
+-        TreeNode curr=root;//代表的是当前节点
+-        while(curr!=null||!stack.isEmpty()){
+-            if(curr!=null){
+-                System.out.println("去"+curr.val+"\t"); //前序遍历
++        LinkedList<TreeNode> stack = new LinkedList<>();
++        TreeNode curr = root;//代表的是当前节点
++        while (curr != null || !stack.isEmpty()) {
++            if (curr != null) {
++                System.out.println("去" + curr.val + "\t"); //前序遍历
+                 stack.push(curr);//压入栈，记录回来的路径
+-                curr=curr.left;
+-            }else{
++                curr = curr.left;
++            } else {
+                 //如果当前节点为空，那么就弹出栈顶元素
+-                curr=stack.pop();
+-                System.out.println("回"+curr.val+"\t"); //中序遍历
+-                curr=curr.right;
++                curr = stack.pop();
++                System.out.println("回" + curr.val + "\t"); //中序遍历
++                curr = curr.right;
++            }
++        }
++    }
++
++    //Morris中序遍历
++    public static void morrisInOrder(TreeNode root) {
++        //用来表示当前节点
++        TreeNode curr = root;
++        while (curr != null) {
++            //如果当前节点的左子为空，直接走右子
++            if (curr.left == null) {
++                System.out.println("去:" + curr.val + "\t");
++                curr = curr.right;
++            } else {
++                //如果左子不为空，则找到左子
++                TreeNode pre = curr.left;
++                //获取到左子树的最右边的节点，也就是中序遍历的跟节点的前驱节点，可以作为线索
++                //如果left.right == curr，说明在之前，已经遍历过了，这个线索已经指向好了
++                while (pre.right != null && pre.right != curr) {
++                    pre = pre.right;
++                }
++                //while循环之后，left节点变成了线索节点了，pre.right != curr不满足
++                if (pre.right == curr) {
++                    //意味着前驱节点的右节点，也就是线索节点已经被设置，该次遍历为回溯
++                    //左边已经确定，接下来处理右边，恢复树结构
++                    pre.right = null;
++                    System.out.println("线索回归:" + curr.val + "\t");
++                    curr = curr.right;
++                } else { //pre.right != null情况不满足
++                    //首次找到线索节点（前驱节点），设置线索,让其的右子树指向当前节点
++                    pre.right = curr;
++                    //将当前节点移动到左子树
++                    curr = curr.left;
++                }
+             }
+         }
+     }
+ 
+     //非递归后序遍历
+-    public static void nonRecPostOrder(TreeNode root){
++    public static void nonRecPostOrder(TreeNode root) {
+         //用栈结构来存储走过的节点,记住回来的路（父亲节点)
+-        LinkedList<TreeNode> stack=new LinkedList<>();
+-        TreeNode curr=root;//代表的是当前节点
+-        TreeNode pop=null;//记录最近一次弹栈的元素
+-        while(curr!=null||!stack.isEmpty()){
+-            if(curr!=null){
++        LinkedList<TreeNode> stack = new LinkedList<>();
++        TreeNode curr = root;//代表的是当前节点
++        TreeNode pop = null;//记录最近一次弹栈的元素
++        while (curr != null || !stack.isEmpty()) {
++            if (curr != null) {
+ //                System.out.println("去"+curr.val+"\t");
+                 stack.push(curr);//压入栈，记录回来的路径
+-                curr=curr.left;
+-            }else{
+-                TreeNode peek=stack.peek();//栈顶元素
++                curr = curr.left;
++            } else {
++                TreeNode peek = stack.peek();//栈顶元素
+                 //peek.right==pop：代表的是右子树已经处理完成
+-                if(peek.right==null || peek.right==pop){
++                if (peek.right == null || peek.right == pop) {
+                     //右子树处理完成
+-                     pop=stack.pop();
+-                    System.out.println("回"+pop.val+"\t");
+-                }else{
+-                    curr=peek.right;
++                    pop = stack.pop();
++                    System.out.println("回" + pop.val + "\t");
++                } else {
++                    curr = peek.right;
+                 }
+ 
+             }
+@@ -111,30 +146,30 @@
+     //前序遍历：在待处理右子树之前进行打印，中序遍历：在左子树处理之后，右子树处理之前进行打印，右子树为空也需要打印。
+     //后序遍历：在处理右子树之后进行打印。
+     //非递归遍历模板代码，前中后
+-    public static void nonRecOrder(TreeNode root){
++    public static void nonRecOrder(TreeNode root) {
+         //用栈结构来存储走过的节点,记住回来的路（父亲节点)
+-        LinkedList<TreeNode> stack=new LinkedList<>();
+-        TreeNode curr=root;//代表的是当前节点
+-        TreeNode pop=null;//记录最近一次弹栈的元素
+-        while(curr!=null||!stack.isEmpty()){
+-            if(curr!=null){
++        LinkedList<TreeNode> stack = new LinkedList<>();
++        TreeNode curr = root;//代表的是当前节点
++        TreeNode pop = null;//记录最近一次弹栈的元素
++        while (curr != null || !stack.isEmpty()) {
++            if (curr != null) {
+                 //压入栈，记录回来的路径
+                 stack.push(curr);
+-                System.out.println("前"+curr.val+"\t");
++                System.out.println("前" + curr.val + "\t");
+                 //待处理左子树
+-                curr=curr.left;
+-            }else{
+-                TreeNode peek=stack.peek();//栈顶元素
+-                if(peek.right==null){ //没有右子树
+-                    System.out.println("中"+peek.val+"\t");
+-                    pop=stack.pop();
+-                    System.out.println("后"+pop.val+"\t");
+-                }else if(peek.right==pop){//右子树处理完成
+-                    pop=stack.pop();
+-                    System.out.println("后"+pop.val+"\t");
+-                }else{//待处理右子树
+-                    System.out.println("中"+peek.val+"\t");
+-                    curr=peek.right;
++                curr = curr.left;
++            } else {
++                TreeNode peek = stack.peek();//栈顶元素
++                if (peek.right == null) { //没有右子树
++                    System.out.println("中" + peek.val + "\t");
++                    pop = stack.pop();
++                    System.out.println("后" + pop.val + "\t");
++                } else if (peek.right == pop) {//右子树处理完成
++                    pop = stack.pop();
++                    System.out.println("后" + pop.val + "\t");
++                } else {//待处理右子树
++                    System.out.println("中" + peek.val + "\t");
++                    curr = peek.right;
+                 }
+ 
+             }
+@@ -142,6 +177,4 @@
+     }
+ 
+ 
+-
+-
+ }
+Index: src/main/java/com/zzm/algorithm/sort/AllSort.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.algorithm.sort;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.algorithm.sort\n * @Author: zzm\n * @CreateTime: 2024-03-21  12:44\n * @Description: TODO\n * @Version: 1.0\n */\npublic class AllSort {\n\n    public static void main(String[] args) {\n        int[] arr = {1, 3, 2, 5, 4, 7, 6, 9, 8};\n        int[] array=new int[arr.length];\n//        split(arr, 0,array.length-1,array);\n        heapSort(arr);\n        for (int i : arr) {\n            System.out.println(i);\n        }\n    }\n\n\n    //快排\n    public static void quickSort(int[] arr,int left,int right){\n        if(left>=right){\n            return;\n        }\n        int p=partition(arr,left,right);\n        quickSort(arr,left,p-1);\n        quickSort(arr,p+1,right);\n    }\n\n    public static int partition(int[] arr,int left,int right){\n        //定义基准点\n        int p=arr[right];\n        int i=left;//遇到比基准点大的就停下来\n        int j=left;//找基准点小的\n        while(j<right){\n            if(arr[j]<p){\n                //找到比基准点小的了\n                if(i!=j){\n                    swap(arr,i,j);\n                }\n                i++;\n            }\n            j++;\n        }\n        swap(arr,i,right);\n        return i;\n    }\n\n\n    //归并排序\n    public static void split(int[] arr, int left,int right,int[] array){\n        //拆分数组\n        if(left>=right){\n            return;\n        }\n        int mid=(left+right)/2;\n        split(arr,left,mid,array);\n        split(arr,mid+1,right,array);\n        merge(arr,left,mid,mid+1,right,array);\n        System.arraycopy(array,left,arr,left,right-left+1);\n    }\n\n    public static void merge(int[] arr,int i,int iEnd,int j,int jEnd,int[] array){\n        int k=i;\n        while(i<=iEnd&&j<=jEnd){\n            if(arr[i]<arr[j]){\n                array[k]=arr[i];\n                i++;\n            }else{\n                array[k]=arr[j];\n                j++;\n            }\n            k++;\n        }\n\n        if(i>iEnd){\n            System.arraycopy(arr,j,array,k,jEnd-j+1);\n        }\n        if(j>jEnd){\n            System.arraycopy(arr,i,array,k,iEnd-i+1);\n        }\n\n    }\n\n\n    //堆排序\n    public static void heapSort(int[] arr){\n        //建堆\n        heapify(arr,arr.length);\n        for(int i=arr.length-1;i>0;i--){\n            swap(arr,0,i);\n            down(arr,0,i);\n        }\n\n    }\n\n    //建堆\n    public static void heapify(int[] arr,int size){\n        for(int i=size/2-1;i>=0;i--){\n            down(arr,i,size);\n        }\n    }\n\n    //下降\n    public static void down(int[] arr,int parent,int size){\n        while(true){\n            int left=2*parent+1;\n            int right=left+1;\n            int max=parent;\n            if(left<size&&arr[left]>arr[max]){\n                //如果左边比右边大\n                max=left;\n            }\n            if(right<size&&arr[right]>arr[max]){\n                max=right;\n            }\n            if(max==parent){\n                break;\n                //没有发生交换\n            }\n            if(max!=parent){\n                swap(arr,max,parent);\n                parent=max;\n            }\n        }\n    }\n\n\n\n\n    public static void swap(int [] arr,int i,int j){\n        int temp=arr[i];\n        arr[i]=arr[j];\n        arr[j]=temp;\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/algorithm/sort/AllSort.java b/src/main/java/com/zzm/algorithm/sort/AllSort.java
+--- a/src/main/java/com/zzm/algorithm/sort/AllSort.java	
++++ b/src/main/java/com/zzm/algorithm/sort/AllSort.java	
+@@ -1,5 +1,7 @@
+ package com.zzm.algorithm.sort;
+ 
++import java.util.LinkedList;
++
+ /**
+  * @BelongsProject: leet
+  * @BelongsPackage: com.zzm.algorithm.sort
+@@ -18,6 +20,7 @@
+         for (int i : arr) {
+             System.out.println(i);
+         }
++        LinkedList<Integer> stack = new LinkedList<>();
+     }
+ 
+ 
+@@ -48,6 +51,7 @@
+         }
+         swap(arr,i,right);
+         return i;
++
+     }
+ 
+ 
+@@ -61,6 +65,7 @@
+         split(arr,left,mid,array);
+         split(arr,mid+1,right,array);
+         merge(arr,left,mid,mid+1,right,array);
++        //把有序的值赋值给原数组
+         System.arraycopy(array,left,arr,left,right-left+1);
+     }
+ 
+@@ -127,6 +132,7 @@
+                 parent=max;
+             }
+         }
++
+     }
+ 
+ 
+@@ -137,4 +143,9 @@
+         arr[i]=arr[j];
+         arr[j]=temp;
+     }
++
++
++
+ }
++
++
+Index: src/main/java/com/zzm/hot100/forty/ThirtySeven.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.forty;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.forty\n * @Author: zzm\n * @CreateTime: 2024-02-02  19:29\n * @Description: TODO\n * @Version: 1.0\n */\n//37.解数独\npublic class ThirtySeven {\n    public static void main(String[] args) {\n\n    }\n    //1.不断遍历每个未填的空格，逐一尝试1~9 若行，列九宫格内没有冲突，则填入\n    //2.一旦1~9都尝试失败，回溯到上一个状态，换数字填入\n    //3.关键还是要记录冲突状态\n    public void solveSudoku(char[][] board) {\n        //行冲突状态\n        //row[i]={false,false,false,false,false,false,false,false,false}\n        boolean[][] row=new boolean[9][9];\n        //列冲突状态  1是冲突的\n        //col[i]={true,false,false,false,false,false,false,false,false}\n        boolean[][] col=new boolean[9][9];\n        //九宫格冲突状态\n        //block[i/3*3+j/3]={false,false,false,false,false,false,false,false,false}\n        boolean[][] block=new boolean[9][9];\n        //初始化\n        for(int i=0;i<9;i++){//行\n            for(int j=0;j<9;j++){//列\n                char ch=board[i][j];\n                if(ch!='.'){\n                    //初始化冲突状态\n                    row[i][ch-'1']=true;//第i行的数字5冲突，则索引是4\n                    col[j][ch-'1']=true;\n                    block[i/3*3+j/3][ch-'1']=true;//i/3*3+j/3个单元格的数字5冲突，则索引是4\n                }\n            }\n        }\n        dfs(0,0,board,row,col,block);\n\n    }\n\n    static boolean dfs(int i,int j,char[][]table,boolean[][]row,boolean[][]col,boolean[][]block){\n\n        //若table[i][j]为空格，则不会走while循环\n        while(table[i][j]!='.'){//查找下一个空格\n            if(++j>=9){\n                //该行空格找完，去下一行找\n                j=0;//列重置\n                i++;\n            }\n            if(i>=9){\n                return true;//找到解\n            }\n        }\n\n        //填空\n        for (int k = 1; k <= 9; k++) {\n            //检查冲突\n            if(row[i][k-1]||col[j][k-1]||block[i/3*3+j/3][k-1]){\n                continue;\n            }\n            //填入数字\n            table[i][j]=(char)(k+'0');//变成字符\n\n            //记录冲突\n            //row[0][0]=true 第0行不能存储’1‘\n            row[i][k-1]=true;\n            //\n            col[j][k-1]=true;\n            //block[0][0]=true 第0个单元格不能存储’1‘\n            block[i/3*3+j/3][k-1]=true;\n            if(dfs(i,j,table,row,col,block)){\n                return true;\n            }\n            //回溯\n            table[i][j]='.';\n            row[i][k-1]=false;\n            col[j][k-1]=false;\n            block[i/3*3+j/3][k-1]=false;\n        }\n        return false;\n\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/forty/ThirtySeven.java b/src/main/java/com/zzm/hot100/forty/ThirtySeven.java
+--- a/src/main/java/com/zzm/hot100/forty/ThirtySeven.java	
++++ b/src/main/java/com/zzm/hot100/forty/ThirtySeven.java	
+@@ -72,6 +72,7 @@
+             col[j][k-1]=true;
+             //block[0][0]=true 第0个单元格不能存储’1‘
+             block[i/3*3+j/3][k-1]=true;
++            //除了这个数字还要看填入其他数字是否可行，所以还要继续for循环下一个数字
+             if(dfs(i,j,table,row,col,block)){
+                 return true;
+             }
+Index: src/main/java/com/zzm/hot100/twenty/SixTeen.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.twenty;\n\nimport java.util.*;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-14  14:12\n * @Description: TODO\n * @Version: 1.0\n */\n//最接近的三数之和\npublic class SixTeen {\n    public static void main(String[] args) {\n\n\n        int target=1;\n        int [] nums={-1,2,1,-4};\n//        long start = System.currentTimeMillis();\n//        System.out.println(threeSumClosest(nums,target));\n//        long spend = System.currentTimeMillis()-start;\n//        System.out.println(\"执行时间\"+spend);\n        System.out.println(plus(nums,target));\n    }\n\n    //超出时间限制\n    public static int threeSumClosest(int[] nums, int target) {\n        HashMap<String,Integer> map=new HashMap<>();\n        map.put(\"abs\",Integer.MAX_VALUE);\n        //不重复指数据下标不重复\n        int length=nums.length;\n        int res=0;\n        for(int i=0;i<length;i++){\n            //i=0,j=1,k=2\n            for(int j=0;j<length;j++){\n                //遍历不重复下标的第二个\n                if(i!=j){\n                    for(int k=0;k<length;k++){\n                        //先当成两数之和\n                        if(k!=j&&k!=i){\n                            int sum=nums[k]+nums[j]+nums[i];\n                            //获得sum-target的绝对值\n                            int abs=Math.abs(sum-target);\n                            //如果这次的绝对值比上次的小，就更新res，记录新的sum\n                            if(map.get(\"abs\")>abs){\n                                map.put(\"res\",sum);\n                                map.put(\"abs\",abs);\n                            }\n                        }\n                    }\n                }\n            }\n        }\n        res=map.get(\"res\");\n        //去重\n        return res;\n    }\n\n    public static int threeSumClosest2(int[] nums, int target) {\n        Arrays.sort(nums);\n        int length=nums.length;\n\n        int res=nums[0]+nums[1]+nums[2];\n        for(int i=0;i<length;i++){\n            int left=i+1;\n            int right=length-1;\n            while(left<right){\n                int sum=nums[i]+nums[left]+nums[right];\n                if(Math.abs(sum-target)<Math.abs(res-target)){\n                    res=sum;\n                }\n                if(sum>target){\n                    right--;\n                }else if(sum<target){\n                    left++;\n                }else{\n                    return res;\n                }\n            }\n        }\n        return res;\n    }\n\n    public int threeSumClosestRight(int[] nums, int target) {\n        Arrays.sort(nums);\n        int ans = nums[0] + nums[1] + nums[2];\n        for(int i=0;i<nums.length;i++) {\n            int start = i+1, end = nums.length - 1;\n            while(start < end) {\n                int sum = nums[start] + nums[end] + nums[i];\n                if(Math.abs(target - sum) < Math.abs(target - ans))\n                    //ans记录的是最接近的三数之和\n                    ans = sum;\n                if(sum > target)\n                    end--;\n                else if(sum < target)\n                    start++;\n                else\n                    return ans;\n            }\n        }\n        return ans;\n    }\n\n\n    public static int plus(int[] nums,int target){\n        LinkedList<Integer> stack=new LinkedList<>();\n        int result=0;\n        int right=nums.length-1;\n        int left=0;\n        Arrays.sort(nums);\n        dfs(3,nums,target,stack,left,right,result,0);\n        return result;\n    }\n\n    public static void dfs(int n,int[] nums,int target,LinkedList<Integer> stack,int left,int right,int result,int temp){\n\n        if(n==2){\n            //两数之和\n            twoSum(nums,target,left,right,temp,result);\n            return ;\n        }\n\n        for(int i=left;i<right;i++){\n            //去重\n            if(i>left&&nums[i]==nums[i-1]){\n                continue;\n            }\n            temp=nums[i];\n            stack.push(nums[i]);\n            dfs(n-1,nums,target,stack,left+1,right,result,temp);\n            stack.pop();\n        }\n    }\n    public static int twoSum(int[] nums,int target,int left,int right,int stack,int result){\n\n        int abs=Integer.MAX_VALUE;\n        while (left<right){\n            int sum=nums[left]+nums[right]+stack;\n            //如果这次的绝对值比上次的小，就更新abs，记录新的sum\n            if(abs>Math.abs(sum-target)){\n                result=sum;\n                abs=Math.abs(sum-target);\n            }\n            //因为已经排好序了，只移动left只会让和变大，只移动right只会让和变小\n            left++;\n            right--;\n            //去重\n            while (left<right&&nums[left]==nums[left-1]){\n                left++;\n            }\n        }\n        return result;\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/twenty/SixTeen.java b/src/main/java/com/zzm/hot100/twenty/SixTeen.java
+--- a/src/main/java/com/zzm/hot100/twenty/SixTeen.java	
++++ b/src/main/java/com/zzm/hot100/twenty/SixTeen.java	
+@@ -134,7 +134,7 @@
+         }
+     }
+     public static int twoSum(int[] nums,int target,int left,int right,int stack,int result){
+-
++        //记录的是上一次的绝对值差值
+         int abs=Integer.MAX_VALUE;
+         while (left<right){
+             int sum=nums[left]+nums[right]+stack;
+Index: src/main/java/com/zzm/hot100/thirty/TwentyFour.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.thirty;\n\nimport com.zzm.structure.ListNode;\n\nimport java.util.LinkedList;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-16  16:10\n * @Description: TODO\n * @Version: 1.0\n */\n//24.两两交换链表中的节点\npublic class TwentyFour {\n    public static void main(String[] args) {\n        ListNode l1=new ListNode(1);\n        ListNode l2=new ListNode(2);\n        ListNode l3=new ListNode(3);\n        ListNode l4=new ListNode(4);\n        l1.next=l2;\n        l2.next=l3;\n        l3.next=l4;\n        ListNode node = new TwentyFour().swapPairs(l1);\n        //依次输出链表各个节点的值\n        while (node!=null){\n            System.out.print(node.val+\" \");\n            node=node.next;\n        }\n\n    }\n\n    public ListNode swapPairsPlus(ListNode head) {\n        ListNode dummyHead = new ListNode(0);\n        dummyHead.next = head;\n        ListNode temp = dummyHead;\n        while (temp.next != null && temp.next.next != null) {\n            ListNode node1 = temp.next;\n            ListNode node2 = temp.next.next;\n            temp.next = node2;\n            node1.next = node2.next;\n            node2.next = node1;\n            temp = node1;\n        }\n        return dummyHead.next;\n    }\n\n    public ListNode swapPairs(ListNode head) {\n        LinkedList<ListNode> stack = new LinkedList<>();\n        int length = getLength(head);\n\n        if (length==0){\n            return null;\n        }\n        for (int i = 0; i < length; i++) {\n            stack.push(head);\n            head = head.next;\n        }\n        if(stack.size()==1){\n            return stack.pop();\n        }\n        //stack 1,2,3,4,5\n        LinkedList<ListNode> newStack= new LinkedList<>();\n        if(stack.size()%2==1){\n            ListNode pop = stack.pop();\n            pop.next=null;\n            while (stack.size()!=0){\n                //stack 1,2,3,4\n                ListNode node1 =stack.pop();//4 2\n                node1.next=null;\n                ListNode node2=stack.pop();//3 1\n                node2.next=null;\n                //从头部填入列表 //3,4,1,2\n                newStack.push(node2);\n                newStack.push(node1);\n            }\n            ListNode res=new ListNode(0);\n            ListNode cur=res;\n            while (newStack.size()!=0){\n                res.next=newStack.pop();\n                res=res.next;\n            }\n            res.next=pop;\n            return cur.next;\n\n        }else{\n            while (stack.size()!=0){\n                //stack 1,2,3,4\n                ListNode node1=stack.pop();//4 2\n                node1.next=null;\n                ListNode node2=stack.pop();//3 1\n                node2.next=null;\n                //从头部填入列表 //3,4,1,2\n                newStack.push(node2);\n                newStack.push(node1);\n            }\n            ListNode res=new ListNode(0);\n            ListNode cur=res;\n            while (newStack.size()!=0){\n                res.next=newStack.pop();\n                res=res.next;\n            }\n            return cur.next;\n        }\n\n    }\n\n    //交换节点位置\n    public void swap(ListNode node1,ListNode node2){\n        ListNode temp = node1;\n        node1 = node2;\n        node2 = temp;\n    }\n\n    public int getLength(ListNode head){\n        int length = 0;\n        while(head!=null){\n            length++;\n            head = head.next;\n        }\n        return length;\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/thirty/TwentyFour.java b/src/main/java/com/zzm/hot100/thirty/TwentyFour.java
+--- a/src/main/java/com/zzm/hot100/thirty/TwentyFour.java	
++++ b/src/main/java/com/zzm/hot100/thirty/TwentyFour.java	
+@@ -22,6 +22,7 @@
+         l1.next=l2;
+         l2.next=l3;
+         l3.next=l4;
++        LinkedList<Integer> stack = new LinkedList<>();
+         ListNode node = new TwentyFour().swapPairs(l1);
+         //依次输出链表各个节点的值
+         while (node!=null){
+Index: src/main/java/com/zzm/hot100/thirty/TwentyTwo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.thirty;\n\nimport java.util.ArrayList;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-16  13:02\n * @Description: TODO\n * @Version: 1.0\n */\n//22.括号生成\n    //深度优先遍历，剪枝算法。左括号数量应该严格大于右括号才符合规则。\npublic class TwentyTwo {\n    public static void main(String[] args) {\n        int n=2;\n        System.out.println(new TwentyTwo().generateParenthesis(2));\n\n    }\n\n\n    public List<String> generateParenthesis(int n) {\n        List<String> res=new ArrayList<>();\n        dfs(\"\",n,n,res);\n        return res;\n    }\n\n    public void dfs(String cur,int left,int right,List<String> res){\n\n\n        if(left==0&&right==0){\n            res.add(cur);\n            return;\n        }\n\n        if(left>right){\n            return;\n        }\n\n        if(left>0){\n            dfs(cur+\"(\",left-1,right,res);\n        }\n\n        if(right>0){\n            dfs(cur+\")\",left,right-1,res);\n        }\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/thirty/TwentyTwo.java b/src/main/java/com/zzm/hot100/thirty/TwentyTwo.java
+--- a/src/main/java/com/zzm/hot100/thirty/TwentyTwo.java	
++++ b/src/main/java/com/zzm/hot100/thirty/TwentyTwo.java	
+@@ -27,24 +27,22 @@
+         return res;
+     }
+ 
+-    public void dfs(String cur,int left,int right,List<String> res){
+-
+-
+-        if(left==0&&right==0){
++    public void dfs(String cur, int left, int right, List<String> res) {
++        if (left == 0 && right == 0) {
+             res.add(cur);
+             return;
+         }
+ 
+-        if(left>right){
++        if (left > right) {
+             return;
+         }
+ 
+-        if(left>0){
+-            dfs(cur+"(",left-1,right,res);
++        if (left > 0) {
++            dfs(cur + "(", left - 1, right, res);
+         }
+ 
+-        if(right>0){
+-            dfs(cur+")",left,right-1,res);
++        if (right > 0) {
++            dfs(cur + ")", left, right - 1, res);
+         }
+     }
+ }
+Index: src/main/java/com/zzm/hot100/fifty/FortyEight.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.fifty;\n\nimport java.util.ArrayList;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.fifty\n * @Author: zzm\n * @CreateTime: 2024-02-17  22:36\n * @Description: TODO\n * @Version: 1.0\n */\n//48. 旋转图像\npublic class FortyEight {\n\n    public static void main(String[] args) {\n        int[][] matrix={{1,2,3},{4,5,6},{7,8,9}};\n        new FortyEight().rotate(matrix);\n        System.out.println(matrix);\n    }\n    public void rotate(int[][] matrix) {\n        List<List<Integer>> temp=new ArrayList<>();\n\n        for (int i = 0; i < matrix.length; i++) {\n            List<Integer> list=new ArrayList<>();\n            for (int j = 0; j < matrix.length; j++) {\n                list.add(matrix[i][j]);\n            }\n            temp.add(list);\n        }\n\n        for(int i=0;i<matrix.length;i++){\n            List<Integer> list = temp.get(i);\n            for(int j=0;j<matrix.length;j++){\n                matrix[j][matrix.length-1-i]=list.get(j);\n            }\n        }\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/fifty/FortyEight.java b/src/main/java/com/zzm/hot100/fifty/FortyEight.java
+--- a/src/main/java/com/zzm/hot100/fifty/FortyEight.java	
++++ b/src/main/java/com/zzm/hot100/fifty/FortyEight.java	
+@@ -1,6 +1,7 @@
+ package com.zzm.hot100.fifty;
+ 
+ import java.util.ArrayList;
++import java.util.HashMap;
+ import java.util.List;
+ 
+ /**
+@@ -18,6 +19,7 @@
+         int[][] matrix={{1,2,3},{4,5,6},{7,8,9}};
+         new FortyEight().rotate(matrix);
+         System.out.println(matrix);
++        List list = new ArrayList<>();
+     }
+     public void rotate(int[][] matrix) {
+         List<List<Integer>> temp=new ArrayList<>();
+@@ -37,4 +39,40 @@
+             }
+         }
+     }
++
++
++
++
++}
++
++class Solution {
++    public void rotate(int[][] matrix) {
++
++        int len = matrix[0].length;
++
++        //右上 <-> 左下
++        for (int i = 0; i < len; i++) {
++            for (int j = 0; j < len - i; j++) {
++                //上半部分
++                int temp = matrix[i][j];
++                //行 ->(对应) 反列。列 -> 反行
++                matrix[i][j] = matrix[len - 1 - j][len - 1 - i];
++                matrix[len - 1 - j][len - 1 - i] = temp;
++            }
++        }
++
++
++        //水平交换，上 <-> 下
++
++        for (int i = 0; i < len / 2; i++) {
++            for (int j = 0; j < len; j++) {
++                //上半部分
++                int temp = matrix[i][j];
++                matrix[i][j] = matrix[len - i - 1][j];
++                matrix[len - i - 1][j] = temp;
++            }
++        }
++
++    }
++
+ }
+Index: src/main/java/com/zzm/algorithm/kmp/KmpFind.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.algorithm.kmp;\n\nimport java.util.Arrays;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.algorithm.kmp\n * @Author: zzm\n * @CreateTime: 2024-02-22  21:31\n * @Description: TODO\n * @Version: 1.0\n */\n//字符串匹配\npublic class KmpFind {\n\n    /*\n    最长前后缀数组：只跟模式字符串有关\n    1.索引：使用了模式字符串前j个字符串-1\n    2.值：最长前后缀的长度（恰好是j所要跳转的位置）\n     **/\n    static int[] lps(char[] pattern){\n//        return new int[]{0,0,1,2,3,0,1};\n        int[] lps=new int[pattern.length];\n        int i=1;//i是在\n        int j=0;\n        while(i<pattern.length){\n            //遇到相同字符\n            if(pattern[i]==pattern[j]){\n                lps[i]=j+1;//数组的索引位置\n                i++;\n                j++;\n            }else if(j==0){\n                //前面没有匹配到的字符串\n                i++;\n            }else{\n                //前面有匹配到的字符串,跳到哪里取决于j前面有几个字符\n                //j-1就是解的位置。\n                j=lps[j-1];\n            }\n        }\n        return lps;\n\n    }\n\n    static int strStr(String str1,String str2){\n        char[] origin=str1.toCharArray();//原始字符串\n        char[] pattern=str2.toCharArray();//模式字符串\n        int[] lps=lps(pattern);//最长前后缀数组\n        //1.匹配成功:i++,j++，直到j==模式字符串长度\n        //2.匹配失败j!=0,跳过最长前后缀字符串，继续匹配.j==0则i++\n        int i=0,j=0;//i是在原始字符串的指针，j是在模式字符串的指针\n       // pattern.length-j<=origin.length-i;\n        while(i<origin.length){\n            if(origin[i]==pattern[j]){\n                i++;\n                j++;\n            }else if(j==0){\n                //模式字符串和原始字符串的字符不匹配\n                i++;\n            }else{\n                j=lps[j-1];\n            }\n            if(j==pattern.length){\n                //找到解\n//                return i-pattern.length;\n                // 第一个判断中的i++;//当i遍历到6的时候，如果仍然相等，那么找到解还会再+1，所以i可以取到7，只是不进入下一层循环了\n                return i-j;\n            }\n        }\n        return -1;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(strStr(\"abaabab\",\"abab\"));\n        System.out.println(\"abaabab\".indexOf(\"abab\"));\n        System.out.println(Arrays.toString(lps(\"abcabc\".toCharArray())));\n    }\n\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/algorithm/kmp/KmpFind.java b/src/main/java/com/zzm/algorithm/kmp/KmpFind.java
+--- a/src/main/java/com/zzm/algorithm/kmp/KmpFind.java	
++++ b/src/main/java/com/zzm/algorithm/kmp/KmpFind.java	
+@@ -19,6 +19,7 @@
+     2.值：最长前后缀的长度（恰好是j所要跳转的位置）
+      **/
+     static int[] lps(char[] pattern){
++        //abeabf
+ //        return new int[]{0,0,1,2,3,0,1};
+         int[] lps=new int[pattern.length];
+         int i=1;//i是在
+@@ -33,7 +34,8 @@
+                 //前面没有匹配到的字符串
+                 i++;
+             }else{
+-                //前面有匹配到的字符串,跳到哪里取决于j前面有几个字符
++                //遇到不同的时候看看前边的字符串有几个后缀
++                //ABACABAB: ABAC   ABAB 都有ABA。 当到所以lps[J-1]就是ABAC指针在C位置时，ABA有几个相同前后缀，指针到前缀的下一个位置
+                 //j-1就是解的位置。
+                 j=lps[j-1];
+             }
+@@ -61,6 +63,8 @@
+                 j=lps[j-1];
+             }
+             if(j==pattern.length){
++                System.out.println("模式:"+j);
++                System.out.println("原本:"+i);
+                 //找到解
+ //                return i-pattern.length;
+                 // 第一个判断中的i++;//当i遍历到6的时候，如果仍然相等，那么找到解还会再+1，所以i可以取到7，只是不进入下一层循环了
+@@ -71,9 +75,9 @@
+     }
+ 
+     public static void main(String[] args) {
+-        System.out.println(strStr("abaabab","abab"));
+-        System.out.println("abaabab".indexOf("abab"));
+-        System.out.println(Arrays.toString(lps("abcabc".toCharArray())));
++//        System.out.println(Arrays.toString(lps("abacabab".toCharArray())));
++        System.out.println(strStr("abacabab","abab"));
++
+     }
+ 
+ 
+Index: src/main/java/com/zzm/hot100/fifty/FortyFive.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.fifty;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.fifty\n * @Author: zzm\n * @CreateTime: 2024-02-17  20:44\n * @Description: TODO\n * @Version: 1.0\n */\n//45. 跳跃游戏 II\npublic class FortyFive {\n\n\n    public int jump(int[] nums) {\n        int end=0;//使用 end 记录这次跳跃的边界，到达边界就跳跃次数 + 1\n        int maxPosition=0;//使用 maxPosition 记录目前能够跳到的最高位置\n        int steps=0;\n        //找能跳的最远的\n        for (int i = 0; i < nums.length-1; i++) {\n            //每次遍历都会遍历[start,end]区间内的元素，找到这个区间内能跳的最远的\n            maxPosition=Math.max(maxPosition,nums[i]+i);\n            if(i==end){ ////遇到边界，就更新边界，并且步数加一\n                end=maxPosition;\n                steps++;\n            }\n\n            if(end>=nums.length-1){\n                break;\n            }\n        }\n        return steps;\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/fifty/FortyFive.java b/src/main/java/com/zzm/hot100/fifty/FortyFive.java
+--- a/src/main/java/com/zzm/hot100/fifty/FortyFive.java	
++++ b/src/main/java/com/zzm/hot100/fifty/FortyFive.java	
+@@ -11,14 +11,18 @@
+ //45. 跳跃游戏 II
+ public class FortyFive {
+ 
++    public static void main(String[] args) {
++        int[] nums = {2,3,1,1,4};
++        int i = jump(nums);
++    }
+ 
+-    public int jump(int[] nums) {
++    public static int jump(int[] nums) {
+         int end=0;//使用 end 记录这次跳跃的边界，到达边界就跳跃次数 + 1
+         int maxPosition=0;//使用 maxPosition 记录目前能够跳到的最高位置
+         int steps=0;
+         //找能跳的最远的
+         for (int i = 0; i < nums.length-1; i++) {
+-            //每次遍历都会遍历[start,end]区间内的元素，找到这个区间内能跳的最远的
++            //每次遍历都会遍历[start,end]区间内的元素，找到这个区间内能跳的最远的作为下一步起始的位置
+             maxPosition=Math.max(maxPosition,nums[i]+i);
+             if(i==end){ ////遇到边界，就更新边界，并且步数加一
+                 end=maxPosition;
+Index: src/main/java/com/zzm/hot100/fifty/FortyNine.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.fifty;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.HashMap;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.fifty\n * @Author: zzm\n * @CreateTime: 2024-01-29  21:22\n * @Description: TODO\n * @Version: 1.0\n */\n\n//49.字母异位词分组\npublic class FortyNine {\n    public static void main(String[] args) {\n\n    }\n\n    public List<List<String>> groupAnagrams(String[] strs) {\n        HashMap<String,List<String>> map=new HashMap<>();\n        for(String str:strs){\n            char[] chars = str.toCharArray();\n            Arrays.sort(chars);\n            String key=new String(chars);\n            List<String> list = map.computeIfAbsent(key, k -> new ArrayList<>());\n            //如果map里存在对应的key则取出，没有则创建。\n            list.add(str);\n        }\n        return new ArrayList<>(map.values());\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/fifty/FortyNine.java b/src/main/java/com/zzm/hot100/fifty/FortyNine.java
+--- a/src/main/java/com/zzm/hot100/fifty/FortyNine.java	
++++ b/src/main/java/com/zzm/hot100/fifty/FortyNine.java	
+@@ -17,10 +17,13 @@
+ //49.字母异位词分组
+ public class FortyNine {
+     public static void main(String[] args) {
++        String[] strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
++        List<List<String>> lists = groupAnagrams(strs);
++        System.out.println(lists);
+ 
+     }
+ 
+-    public List<List<String>> groupAnagrams(String[] strs) {
++    public static List<List<String>> groupAnagrams(String[] strs) {
+         HashMap<String,List<String>> map=new HashMap<>();
+         for(String str:strs){
+             char[] chars = str.toCharArray();
+Index: src/main/java/com/zzm/hot100/thirty/TwentyNine.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.thirty;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-17  15:08\n * @Description: TODO\n * @Version: 1.0\n */\n//29.两数相除\npublic class TwentyNine {\n    public static void main(String[] args) {\n        int dividend = -2147483648;\n        int divisor = 2;\n//        System.out.println(Integer.MIN_VALUE);\n//        System.out.println(Integer.MAX_VALUE);\n        System.out.println(new TwentyNine().plus(dividend, divisor));\n\n    }\n    //不使用 乘法、除法和取余运算\n    public int divide(int dividend, int divisor) {\n        long flag = 1;\n        if(dividend<0&&divisor>0||dividend>0&&divisor<0){\n            flag = -flag;\n        }\n        System.out.println(flag);\n        long dend = dividend;\n        long isor = divisor;\n        long count = 0;\n        dend=dend<0?-dend:dend;\n        isor=isor<0?-isor:isor;\n        while(dend>=isor){\n            dend -= isor;\n            count++;\n        }\n        System.out.println(\"count\"+count);\n        long res = count*flag;\n        if(res>Integer.MAX_VALUE||res<Integer.MIN_VALUE){\n            return Integer.MAX_VALUE;\n        }\n        return (int)res;\n    }\n\n    // 60/8 = (60-32)/8 + 4 = (60-32-16)/8 + 2 + 4 = 1 + 2 + 4 = 7\n    public int plus(int dividend, int divisor){\n        if(dividend==Integer.MIN_VALUE&&divisor==-1){\n            return Integer.MAX_VALUE;\n        }\n        if(divisor==1){\n            return dividend;\n        }\n        // 考虑被除数为 0 的情况\n        if (dividend == 0) {\n            return 0;\n        }\n\n        int flag = 1;\n        int res=0;\n        if(dividend<0&&divisor>0||dividend>0&&divisor<0){\n            flag = -flag;\n        }\n        res=dfs(dividend,divisor);\n        return flag*res;\n    }\n\n    int dfs(long a,long b){\n        a=a<0?-a:a;\n        b=b<0?-b:b;\n        //a:11 b:3\n        if(a<b){\n            return 0;\n        }\n        int count = 1;\n        long tb = b; //b是被除数\n        //tb+tb就相当于b*2,\n        while((tb+tb)<=a){\n            //count记录倍数\n            count += count;\n            //更新tb为当前2倍，下一轮循环判断\n            tb += tb;\n        }\n        return count+dfs(a-tb,b);\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/thirty/TwentyNine.java b/src/main/java/com/zzm/hot100/thirty/TwentyNine.java
+--- a/src/main/java/com/zzm/hot100/thirty/TwentyNine.java	
++++ b/src/main/java/com/zzm/hot100/thirty/TwentyNine.java	
+@@ -11,8 +11,8 @@
+ //29.两数相除
+ public class TwentyNine {
+     public static void main(String[] args) {
+-        int dividend = -2147483648;
+-        int divisor = 2;
++        int dividend = 60;
++        int divisor = 8;
+ //        System.out.println(Integer.MIN_VALUE);
+ //        System.out.println(Integer.MAX_VALUE);
+         System.out.println(new TwentyNine().plus(dividend, divisor));
+@@ -43,11 +43,11 @@
+     }
+ 
+     // 60/8 = (60-32)/8 + 4 = (60-32-16)/8 + 2 + 4 = 1 + 2 + 4 = 7
+-    public int plus(int dividend, int divisor){
+-        if(dividend==Integer.MIN_VALUE&&divisor==-1){
++    public int plus(int dividend, int divisor) {
++        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+             return Integer.MAX_VALUE;
+         }
+-        if(divisor==1){
++        if (divisor == 1) {
+             return dividend;
+         }
+         // 考虑被除数为 0 的情况
+@@ -56,31 +56,32 @@
+         }
+ 
+         int flag = 1;
+-        int res=0;
+-        if(dividend<0&&divisor>0||dividend>0&&divisor<0){
++        int res = 0;
++        if (dividend < 0 && divisor > 0 || dividend > 0 && divisor < 0) {
+             flag = -flag;
+         }
+-        res=dfs(dividend,divisor);
+-        return flag*res;
++        res = dfs(dividend, divisor);
++        return flag * res;
+     }
+ 
+-    int dfs(long a,long b){
+-        a=a<0?-a:a;
+-        b=b<0?-b:b;
+-        //a:11 b:3
+-        if(a<b){
++    // 60/8 = (60-32)/8 + 4 = (60-32-16)/8 + 2 + 4 = 1 + 2 + 4 = 7
++    int dfs(long a, long b) {
++        a = a < 0 ? -a : a;
++        b = b < 0 ? -b : b;
++        //a:60 b:8
++        if (a < b) {
+             return 0;
+         }
+         int count = 1;
+         long tb = b; //b是被除数
+         //tb+tb就相当于b*2,
+-        while((tb+tb)<=a){
++        while ((tb + tb) <= a) {
+             //count记录倍数
+             count += count;
+             //更新tb为当前2倍，下一轮循环判断
+             tb += tb;
+         }
+-        return count+dfs(a-tb,b);
++        return count + dfs(a - tb, b);
+     }
+ 
+ }
+Index: src/main/java/com/zzm/hot100/hundred/NinetySix.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//package com.zzm.hot100.hundred;\n//\n//import java.util.List;\n//import java.util.stream.Collectors;\n//\n///**\n// * @BelongsProject: leet\n// * @BelongsPackage: com.zzm.hot100\n// * @Author: zzm\n// * @CreateTime: 2024-01-23  20:57\n// * @Description: TODO\n// * @Version: 1.0\n// */\n////96.不同的二叉搜索树\n//public class NinetySix {\n//    public static void main(String[] args) {\n//\n//        String a=\"hello nowcoder\";\n//        String [] b = a.split(\" \");\n//        System.out.println(b[b.length-1].length());\n//\n//        List<Integer> c=List.of(1,2,3,4,5);\n//        List<Integer> collect = c.stream().distinct().sorted().collect(Collectors.toList());\n//\n//    }\n//\n//    public int numTrees(int n) {\n//        long c=1;\n//        for (int i = 0; i < n; i++) {\n//            c=c*2*(i*2+1)/(i+2);\n//        }\n//        return (int)c;\n//\n//    }\n//}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/hundred/NinetySix.java b/src/main/java/com/zzm/hot100/hundred/NinetySix.java
+--- a/src/main/java/com/zzm/hot100/hundred/NinetySix.java	
++++ b/src/main/java/com/zzm/hot100/hundred/NinetySix.java	
+@@ -1,35 +1,65 @@
+-//package com.zzm.hot100.hundred;
+-//
+-//import java.util.List;
+-//import java.util.stream.Collectors;
+-//
+-///**
+-// * @BelongsProject: leet
+-// * @BelongsPackage: com.zzm.hot100
+-// * @Author: zzm
+-// * @CreateTime: 2024-01-23  20:57
+-// * @Description: TODO
+-// * @Version: 1.0
+-// */
+-////96.不同的二叉搜索树
+-//public class NinetySix {
+-//    public static void main(String[] args) {
+-//
+-//        String a="hello nowcoder";
+-//        String [] b = a.split(" ");
+-//        System.out.println(b[b.length-1].length());
+-//
+-//        List<Integer> c=List.of(1,2,3,4,5);
+-//        List<Integer> collect = c.stream().distinct().sorted().collect(Collectors.toList());
+-//
+-//    }
+-//
+-//    public int numTrees(int n) {
+-//        long c=1;
+-//        for (int i = 0; i < n; i++) {
+-//            c=c*2*(i*2+1)/(i+2);
+-//        }
+-//        return (int)c;
+-//
+-//    }
+-//}
++package com.zzm.hot100.hundred;
++
++import java.util.List;
++import java.util.stream.Collectors;
++
++/**
++ * @BelongsProject: leet
++ * @BelongsPackage: com.zzm.hot100
++ * @Author: zzm
++ * @CreateTime: 2024-01-23  20:57
++ * @Description: TODO
++ * @Version: 1.0
++ */
++//96.不同的二叉搜索树
++public class NinetySix {
++
++    /*
++        * 解题思路
++    标签：动态规划
++    假设 n 个节点存在二叉排序树的个数是 G (n)，令 f(i) 为以 i 为根的二叉搜索树的个数，则
++    G(n)=f(1)+f(2)+f(3)+f(4)+...+f(n)
++
++    当 i 为根节点时，其左子树节点个数为 i-1 个，右子树节点为 n-i，则
++    f(i)=G(i−1)∗G(n−i)
++
++    综合两个公式可以得到 卡特兰数 公式
++    G(n)=G(0)∗G(n−1)+G(1)∗(n−2)+...+G(n−1)∗G(0)
++    */
++    public static void main(String[] args) {
++
++        String a="hello nowcoder";
++        String [] b = a.split(" ");
++        System.out.println(b[b.length-1].length());
++
++
++    }
++
++    public int numTrees(int n) {
++        long c=1;
++        for (int i = 0; i < n; i++) {
++            c=c*2*(i*2+1)/(i+2);
++        }
++        return (int)c;
++
++    }
++
++    class Solution {
++        public int numTrees(int n) {
++
++            //G(i) = f(1) + f(2) + .. + f(i)
++            //f(i) = G(i - 1) * G(n - i)
++            int[] dp = new int[n + 1];
++            dp[0] = 1;
++            dp[1] = 1;
++            //外层循环 i 代表当前计算的卡特兰数是 G（i)，因为卡特兰数的计算需要用到前面的值，而前面的值也需要算出。
++            for (int i = 2; i < n + 1; i++) {
++                //内层是G(I)所有可能子问题的和。
++                for (int j = 1; j < i + 1; j++) {
++                    dp[i] += dp[i - j] * dp[j - 1];
++                }
++            }
++            return dp[n];
++        }
++    }
++}
+Index: src/main/java/com/zzm/hot100/sixty/FiftyOne.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.sixty;\n\nimport java.util.Arrays;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.sixty\n * @Author: zzm\n * @CreateTime: 2024-01-29  14:14\n * @Description: TODO\n * @Version: 1.0\n */\n//51.N皇后\npublic class FiftyOne {\n    public static void main(String[] args) {\n        FiftyOne fiftyOne = new FiftyOne();\n        fiftyOne.solveNQueens(8);\n\n    }\n\n    public List<List<String>> solveNQueens(int n) {\n        boolean[] ca=new boolean[n];//记录列冲突\n        //true false false false\n        boolean[] cb=new boolean[2*n-1];//记录左斜线冲突\n        //i+j\n        boolean[] cc=new boolean[2*n-1];//记录右斜线冲突\n        //n-1-(i-j)\n        char[][] table=new char[n][n];//棋盘\n        for(char[] t:table){\n            Arrays.fill(t,'.');\n        }\n        dfs(0,n,table,ca,cb,cc);\n//        for(char[] t:table){\n//            System.out.println(Arrays.toString(t));\n//        }\n        return null;\n    }\n\n    static void dfs(int i,int n,char[][] table,\n                    boolean[] ca,boolean[] cb,boolean[] cc){\n        if(i==n){\n            //找到一个解\n            System.out.println(\"---------------\");\n            for(char[] t:table){\n                System.out.println(Arrays.toString(t));\n            }\n            return ;\n        }\n        //尝试在第i行的每一个位置(每一列)放置皇后\n        for(int j=0;j<n;j++){\n            if(ca[j]||cb[i+j]||cc[n-1-(i-j)]){\n                //如果冲突，跳过该位置\n                continue;\n            }\n            table[i][j]='Q';\n            ca[j]=true;\n            //左斜线\n            cb[i+j]=true;\n            //右斜线\n            cc[n-1-(i-j)]=true;\n            //再尝试往第i+1行放入皇后\n            dfs(i+1,n,table,ca,cb,cc);\n            //回溯\n            table[i][j]='.';\n            ca[j]=false;\n            //左斜线\n            cb[i+j]=false;\n            //右斜线\n            cc[n-1-(i-j)]=false;\n        }\n\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/sixty/FiftyOne.java b/src/main/java/com/zzm/hot100/sixty/FiftyOne.java
+--- a/src/main/java/com/zzm/hot100/sixty/FiftyOne.java	
++++ b/src/main/java/com/zzm/hot100/sixty/FiftyOne.java	
+@@ -2,6 +2,7 @@
+ 
+ import java.util.Arrays;
+ import java.util.List;
++import java.util.concurrent.atomic.AtomicInteger;
+ 
+ /**
+  * @BelongsProject: leet
+@@ -31,6 +32,7 @@
+             Arrays.fill(t,'.');
+         }
+         dfs(0,n,table,ca,cb,cc);
++        Integer res = new Integer(1);
+ //        for(char[] t:table){
+ //            System.out.println(Arrays.toString(t));
+ //        }
+Index: src/main/java/com/zzm/hot100/hundred/NinetyFive.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.hundred;\n\nimport com.zzm.structure.binarytree.TreeNode;\n\nimport java.util.LinkedList;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-23  20:28\n * @Description: TODO\n * @Version: 1.0\n */\n//95. 不同的二叉搜索树 II\npublic class NinetyFive {\n    public static void main(String[] args) {\n//        for (TreeNode generateTree : new NinetyFive().generateTrees(3)) {\n//\n//        }\n\n\n    }\n    public List<TreeNode> generateTrees(int n) {\n        if(n==0){\n            return new LinkedList<TreeNode>();\n        }\n        return generateTrees(1,n);\n\n    }\n\n    public List<TreeNode> generateTrees(int start,int end){\n        List<TreeNode> allTrees=new LinkedList<>();\n        if(start>end){\n            allTrees.add(null);\n            return allTrees;\n        }\n\n        for(int i=start;i<=end;i++){\n            List<TreeNode> leftTrees=generateTrees(start,i-1);\n\n            List<TreeNode> rightTrees=generateTrees(i+1,end);\n\n            for(TreeNode left:leftTrees){\n                for(TreeNode right: rightTrees){\n                    TreeNode currTree = new TreeNode(i);\n                    currTree.left = left;\n                    currTree.right = right;\n                    allTrees.add(currTree);\n\n                }\n            }\n        }\n        return allTrees;\n    }\n\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/hundred/NinetyFive.java b/src/main/java/com/zzm/hot100/hundred/NinetyFive.java
+--- a/src/main/java/com/zzm/hot100/hundred/NinetyFive.java	
++++ b/src/main/java/com/zzm/hot100/hundred/NinetyFive.java	
+@@ -2,6 +2,7 @@
+ 
+ import com.zzm.structure.binarytree.TreeNode;
+ 
++import java.util.ArrayList;
+ import java.util.LinkedList;
+ import java.util.List;
+ 
+@@ -19,31 +20,33 @@
+ //        for (TreeNode generateTree : new NinetyFive().generateTrees(3)) {
+ //
+ //        }
+-
++        List<TreeNode> treeNodes = generateTrees2(3);
++        System.out.println(treeNodes.size());
++    }
+ 
+-    }
+     public List<TreeNode> generateTrees(int n) {
+-        if(n==0){
++        if (n == 0) {
+             return new LinkedList<TreeNode>();
+         }
+-        return generateTrees(1,n);
++        return generateTrees(1, n);
+ 
+     }
+ 
+-    public List<TreeNode> generateTrees(int start,int end){
+-        List<TreeNode> allTrees=new LinkedList<>();
+-        if(start>end){
++    public List<TreeNode> generateTrees(int start, int end) {
++        List<TreeNode> allTrees = new LinkedList<>();
++        if (start > end) {
+             allTrees.add(null);
+             return allTrees;
+         }
+ 
+-        for(int i=start;i<=end;i++){
+-            List<TreeNode> leftTrees=generateTrees(start,i-1);
+-
+-            List<TreeNode> rightTrees=generateTrees(i+1,end);
+-
+-            for(TreeNode left:leftTrees){
+-                for(TreeNode right: rightTrees){
++        for (int i = start; i <= end; i++) {
++            //G(i - 1)
++            List<TreeNode> leftTrees = generateTrees(start, i - 1);
++            //G(end - i)
++            List<TreeNode> rightTrees = generateTrees(i + 1, end);
++            //G(i - 1) * G(end - i)
++            for (TreeNode left : leftTrees) {
++                for (TreeNode right : rightTrees) {
+                     TreeNode currTree = new TreeNode(i);
+                     currTree.left = left;
+                     currTree.right = right;
+@@ -55,5 +58,32 @@
+         return allTrees;
+     }
+ 
++    public static List<TreeNode> generateTrees2(int n) {
++        return recursion(1, n);
++    }
++
++    public static List<TreeNode> recursion(int l, int r) {
++        if (l > r) {
++            List<TreeNode> res = new ArrayList<>();
++            res.add(null);
++            return res;
++        }
++        List<TreeNode> res = new ArrayList<>();
++        for (int i = l; i <= r; i++) {
++            for (TreeNode x : recursion(l, i - 1)) {
++                for (TreeNode y : recursion(i + 1, r)) {
++                    //根节点i
++                    TreeNode newNode = new TreeNode(i);
++                    newNode.left = x;
++                    newNode.right = y;
++                    res.add(newNode);
++                }
++            }
++        }
++        return res;
++    }
++
+ 
+ }
++
++
+Index: src/main/java/com/zzm/hot100/fifty/FortyTwo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.fifty;\n\nimport java.util.LinkedList;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.fifty\n * @Author: zzm\n * @CreateTime: 2024-02-02  21:13\n * @Description: TODO\n * @Version: 1.0\n */\n//42.接雨水 单调栈\npublic class FortyTwo {\n\n    public int trap(int[] heights) {\n\n        LinkedList<Data> stack = new LinkedList<>();\n        int sum=0;\n        for (int i = 0; i < heights.length; i++) {\n            Data right=new Data(i,heights[i]);\n            //把栈内小于加入柱子高度的元素全部弹出\n            while(!stack.isEmpty()&&stack.peek().height< right.height){\n                //4324\n                Data pop = stack.pop();\n                Data left = stack.peek();\n                if(left!=null){//计算水的容量\n                    int width=right.index-left.index-1;\n                    int height = Math.min(left.height, right.height) - pop.height;//中间的高度\n                    sum+=width*height;\n                }\n            }\n            stack.push(right);\n        }\n        return -1;\n    }\n\n    static class Data{\n        int index;\n        int height;\n\n        public Data(int index, int height) {\n            this.index = index;\n            this.height = height;\n        }\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/fifty/FortyTwo.java b/src/main/java/com/zzm/hot100/fifty/FortyTwo.java
+--- a/src/main/java/com/zzm/hot100/fifty/FortyTwo.java	
++++ b/src/main/java/com/zzm/hot100/fifty/FortyTwo.java	
+@@ -13,12 +13,16 @@
+ //42.接雨水 单调栈
+ public class FortyTwo {
+ 
+-    public int trap(int[] heights) {
++    public static void main(String[] args) {
++        int[] heights = {2,1,0,1,3,2,1,2,1};
++        System.out.println(trap(heights));
++    }
++
++    public static int trap(int[] heights) {
+ 
+         LinkedList<Data> stack = new LinkedList<>();
+         int sum=0;
+-        for (int i = 0; i < heights.length; i++) {
+-            Data right=new Data(i,heights[i]);
++        for (int i = 0; i < heights.length; i++) {Data right=new Data(i,heights[i]);
+             //把栈内小于加入柱子高度的元素全部弹出
+             while(!stack.isEmpty()&&stack.peek().height< right.height){
+                 //4324
+@@ -32,7 +36,7 @@
+             }
+             stack.push(right);
+         }
+-        return -1;
++        return sum;
+     }
+ 
+     static class Data{
+Index: src/main/java/com/zzm/hot100/sixty/FiftyThree.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.sixty;\n\nimport java.util.Arrays;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.sixty\n * @Author: zzm\n * @CreateTime: 2024-02-18  00:49\n * @Description: TODO\n * @Version: 1.0\n */\n//53.最大子数组合\npublic class FiftyThree {\n    public int maxSubArray(int[] nums) {\n\n        int ans=nums[0];\n        int sum=0;\n\n        for(int num:nums){\n            if(sum>0){\n                sum+=num;\n            }else{\n                //如果sum小于等于0，那么就不要加了，直接从当前位置开始\n                sum=num;\n            }\n            ans=Math.max(ans,sum);\n        }\n        return ans;\n    }\n\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/sixty/FiftyThree.java b/src/main/java/com/zzm/hot100/sixty/FiftyThree.java
+--- a/src/main/java/com/zzm/hot100/sixty/FiftyThree.java	
++++ b/src/main/java/com/zzm/hot100/sixty/FiftyThree.java	
+@@ -1,6 +1,7 @@
+ package com.zzm.hot100.sixty;
+ 
+ import java.util.Arrays;
++import java.util.Date;
+ 
+ /**
+  * @BelongsProject: leet
+@@ -12,6 +13,11 @@
+  */
+ //53.最大子数组合
+ public class FiftyThree {
++
++    public static void main(String[] args) {
++        System.out.println(new Date().getTime());
++        System.out.println(System.currentTimeMillis());
++    }
+     public int maxSubArray(int[] nums) {
+ 
+         int ans=nums[0];
+@@ -30,4 +36,18 @@
+     }
+ 
+ 
++    public int dp(int[] nums) {
++        // [-2,1,-3,4,-1,2,1,-5,4];
++        //方程f(x)=Math.max(nums[i],nums[i]+f(x-1))
++        int[] f = new int[nums.length];
++        f[0] = nums[0];
++        int res = f[0];
++        for (int i = 1; i < nums.length; i++) {
++            f[i] = Math.max(nums[i], nums[i] + f[i - 1]);
++            res = Math.max(res, f[i]);
++        }
++        return res;
++    }
++
++
+ }
+Index: src/main/java/com/zzm/hot100/hundred/NinetyNine.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.hundred;\n\nimport com.zzm.structure.binarytree.TreeNode;\n\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.LinkedList;\nimport java.util.List;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100\n * @Author: zzm\n * @CreateTime: 2024-01-23  20:56\n * @Description: TODO\n * @Version: 1.0\n */\n//99.恢复二叉搜索树\npublic class NinetyNine {\n    public static void main(String[] args) {\n        TreeNode root = new TreeNode(new TreeNode(null,3,new TreeNode(2)),1,null);\n        recoverTree(root);\n\n\n    }\n\n    public static void recoverTree(TreeNode root) {\n        List<Integer> list = inorder(root, new ArrayList<>());\n        int [] swap = findTwoSwapped(list);\n        //交换搜索二叉树等于这两个值的节点\n        recoverRec(root,2,swap[0],swap[1]);\n    }\n\n    public static void recoverRec(TreeNode node,int count,int x,int y){\n        if(node!=null){\n            if(node.val==x||node.val==y){\n                node.val=node.val==x?y:x;\n                //只换两个值\n                if(--count==0){\n                    return;\n                }\n            }\n            recoverRec(node.right,count,x,y);\n            recoverRec(node.left,count,x,y);\n        }\n    }\n    //中序遍历得到数组\n    public static List<Integer> inorder(TreeNode root,List<Integer> list){\n        if(root==null){\n            return list;\n        }\n        inorder(root.left,list);\n        list.add(root.val);\n        inorder(root.right,list);\n        return list;\n    }\n\n    public static int[] findTwoSwapped(List<Integer> nums) {\n        int index1 = -1, index2 = -1;\n        for (int i = 0; i < nums.size() - 1; ++i) {\n            if (nums.get(i + 1) < nums.get(i)) {\n                index2 = i + 1;\n                if (index1 == -1) {\n                    index1 = i;\n                } else {\n                    break;\n                }\n            }\n        }\n        int x = nums.get(index1), y = nums.get(index2);\n        return new int[]{x, y};\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/hundred/NinetyNine.java b/src/main/java/com/zzm/hot100/hundred/NinetyNine.java
+--- a/src/main/java/com/zzm/hot100/hundred/NinetyNine.java	
++++ b/src/main/java/com/zzm/hot100/hundred/NinetyNine.java	
+@@ -57,6 +57,7 @@
+ 
+     public static int[] findTwoSwapped(List<Integer> nums) {
+         int index1 = -1, index2 = -1;
++        //1,3,2,4
+         for (int i = 0; i < nums.size() - 1; ++i) {
+             if (nums.get(i + 1) < nums.get(i)) {
+                 index2 = i + 1;
+@@ -71,4 +72,67 @@
+         return new int[]{x, y};
+     }
+ 
++
++    static void morris(TreeNode root) {
++        if (root == null) return;
++
++       /* 我们在遍历过程中使用了 prev 变量来记录中序遍历的前一个节点。
++        在每次访问当前节点 curr 的时候，通过比较 prev 和 curr 的值来识别不符合顺序的节点。
++        如果 prev.val > curr.val，则 prev 和 curr 是不符合顺序的一对。
++        如果 first 尚未被设置（即第一个不符合顺序的节点），则设为 prev。
++        无论如何，second 设置为 curr。*/
++        TreeNode curr = root;
++        TreeNode prev = null;//记录上一个遍历的值
++        TreeNode first = null;//记录第一个逆序值，之后不变，只更新second
++        TreeNode second = null;//最后一个逆序位置
++
++        while (curr != null) {
++            if (curr.left == null) {
++                // 检查 prev 和 curr 是否不符合顺序
++                if (prev != null && prev.val > curr.val) {
++                    if (first == null) {
++                        first = prev;
++                    }
++                    second = curr;
++                }
++                prev = curr; //记录过后更新prev指针
++                //curr变成下一个
++                curr = curr.right;
++            } else {
++                // 找到当前节点左子树的最右节点（前驱节点）
++                TreeNode pre = curr.left;
++                while (pre.right != null && pre.right != curr) {
++                    pre = pre.right;
++                }
++
++                if (pre.right == null) {
++                    // 建立线索
++                    pre.right = curr;
++                    curr = curr.left;
++                } else {
++                    // 恢复树的结构
++                    pre.right = null;
++                    // 检查 prev 和 curr 是否不符合顺序
++                    if (prev != null && prev.val > curr.val) {
++                        //记录第一个逆序的位置，如果已经存在则不再修改了
++                        if (first == null) {
++                            first = prev;
++                        }
++                        second = curr;
++                    }
++                    //prev更新为当前值
++                    prev = curr;
++                    curr = curr.right;
++                }
++            }
++        }
++
++        // 交换 first 和 second 的值来修正树
++        if (first != null && second != null) {
++            int temp = first.val;
++            first.val = second.val;
++            second.val = temp;
++        }
++    }
++
+ }
+Index: src/main/java/com/zzm/hot100/eighty/SeventyOne.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.eighty;\n\nimport java.util.LinkedList;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.eighty\n * @Author: zzm\n * @CreateTime: 2024-02-22  14:00\n * @Description: TODO\n * @Version: 1.0\n */\npublic class SeventyOne {\n\n    public static void main(String[] args) {\n        SeventyOne seventyOne = new SeventyOne();\n        String s = seventyOne.simplifyPath(\"/../\");\n        System.out.println(s);\n    }\n\n    public String simplifyPath(String path) {\n        String[] s = path.split(\"/\");\n        LinkedList<String> stack = new LinkedList<>();\n        for (String s1 : s) {\n            if (s1.equals(\"..\")) {\n                if (!stack.isEmpty()) {\n                    stack.pop();\n                }\n            } else if (!s1.equals(\"\") && !s1.equals(\".\")) {\n                stack.push(s1);// foo home\n            }\n        }\n        StringBuilder sb = new StringBuilder();\n        while(!stack.isEmpty()){\n            sb.append(\"/\").append(stack.pollLast());\n        }\n        return sb.length() == 0 ? \"/\" : sb.toString();\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/eighty/SeventyOne.java b/src/main/java/com/zzm/hot100/eighty/SeventyOne.java
+--- a/src/main/java/com/zzm/hot100/eighty/SeventyOne.java	
++++ b/src/main/java/com/zzm/hot100/eighty/SeventyOne.java	
+@@ -1,5 +1,6 @@
+ package com.zzm.hot100.eighty;
+ 
++import java.util.Arrays;
+ import java.util.LinkedList;
+ 
+ /**
+@@ -14,6 +15,9 @@
+ 
+     public static void main(String[] args) {
+         SeventyOne seventyOne = new SeventyOne();
++        String ex = "/a/./b/../../c/";
++        String[] split = ex.split("/");
++        Arrays.asList(split).forEach(System.out::println);
+         String s = seventyOne.simplifyPath("/../");
+         System.out.println(s);
+     }
+Index: src/main/java/com/zzm/hot100/sixty/Sixty.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.sixty;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.sixty\n * @Author: zzm\n * @CreateTime: 2024-02-20  13:42\n * @Description: TODO\n * @Version: 1.0\n */\npublic class Sixty {\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/sixty/Sixty.java b/src/main/java/com/zzm/hot100/sixty/Sixty.java
+--- a/src/main/java/com/zzm/hot100/sixty/Sixty.java	
++++ b/src/main/java/com/zzm/hot100/sixty/Sixty.java	
+@@ -1,5 +1,10 @@
+ package com.zzm.hot100.sixty;
+ 
++import java.util.Arrays;
++import java.util.LinkedList;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.LongAdder;
++
+ /**
+  * @BelongsProject: leet
+  * @BelongsPackage: com.zzm.hot100.sixty
+@@ -9,4 +14,44 @@
+  * @Version: 1.0
+  */
+ public class Sixty {
++
++    public static void main(String[] args) {
++//        Sixty sixty = new Sixty();
++//        System.out.println(sixty.getPermutation(3, 3));
++//        LongAdder longAdder = new LongAdder();
++//        longAdder.increment();
++    }
++
++    public String getPermutation(int n, int k) {
++        StringBuilder res = new StringBuilder();
++        AtomicInteger count = new AtomicInteger(0);
++        boolean[] visited = new boolean[n];
++        backtrack(n, k, new StringBuilder(), count, res, visited);
++        return res.toString();
++    }
++
++    public void backtrack(int n, int k, StringBuilder sb, AtomicInteger count, StringBuilder res, boolean[] visited) {
++        //递归出口
++        if (sb.length() == n) {
++            count.getAndAdd(1);
++            if (count.intValue() == k) {
++                res.append(sb);
++                return;
++            }
++            return;  // 不要忘记返回，避免进一步递归
++        }
++
++        for (int i = 1; i <= n; i++) {
++            if (!visited[i - 1]) {
++                visited[i - 1] = true;
++                sb.append(i);
++                backtrack(n, k, sb, count, res, visited);
++                if (count.intValue() == k) return;  // 当找到结果后，及时结束后续递归
++                sb.deleteCharAt(sb.length() - 1);
++                visited[i - 1] = false;
++            }
++        }
++    }
++
++
+ }
+Index: src/main/java/com/zzm/hot100/eighty/SeventySix.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.eighty;\n\nimport java.util.Arrays;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.eighty\n * @Author: zzm\n * @CreateTime: 2024-02-19  17:24\n * @Description: TODO\n * @Version: 1.0\n */\npublic class SeventySix {\n    public static void main(String[] args) {\n        String s=\"ADOBECODEBANC\";\n        String t=\"ABC\";\n        System.out.println(minWindow(s,t));\n    }\n\n    static String minWindow(String s,String t){\n        char[] target=t.toCharArray();\n        int[] targetCount=new int[128];//一共有128个字符\n        for(char ch:target){\n            targetCount[ch]++;\n        }\n        int passTotal=0;//满足目标串中的条件总数\n        for(int count:targetCount){\n            if(count>0){\n                passTotal++;\n            }\n        }\n        int passed=0;//已经通过的条件数\n\n        //拿到原始串的字符数组\n        char[] source=s.toCharArray();\n        int [] sourceCount=new int[128];//记录原始串中i~j内个字符串出现的次数\n        int i=0;\n        int j=0;\n        Result res=null;\n        while(j<source.length){\n            char right=source[j];\n            sourceCount[right]++;\n\n            if(sourceCount[right]==targetCount[right]){\n                passed++;\n            }\n            //若通过条件数已经满足所有条件，缩小i范围，更新范围内字符计数和通过条件数\n            while(passed==passTotal&&i<=j){\n                if(res==null){\n                    res=new Result(i,j);\n                }else{\n                    if(j-i<res.j-res.i){\n                        res.i=i;\n                        res.j=j;\n                    }\n                }\n                char left=source[i];\n                sourceCount[left]--;\n                //0<1\n                if(sourceCount[left]<targetCount[left]){\n                    passed--;\n                }\n                i++;\n            }\n            j++;\n        }\n        return res==null?\"\":s.substring(res.i,res.j+1);\n    }\n\n    static class Result{\n        int i;\n        int j;\n\n        public Result(int i,int j){\n            this.i=i;\n            this.j=j;\n        }\n    }\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/eighty/SeventySix.java b/src/main/java/com/zzm/hot100/eighty/SeventySix.java
+--- a/src/main/java/com/zzm/hot100/eighty/SeventySix.java	
++++ b/src/main/java/com/zzm/hot100/eighty/SeventySix.java	
+@@ -1,6 +1,7 @@
+ package com.zzm.hot100.eighty;
+ 
+ import java.util.Arrays;
++import java.util.HashMap;
+ 
+ /**
+  * @BelongsProject: leet
+@@ -12,9 +13,24 @@
+  */
+ public class SeventySix {
+     public static void main(String[] args) {
+-        String s="ADOBECODEBANC";
+-        String t="ABC";
+-        System.out.println(minWindow(s,t));
++//        String s="ADOBECODEBANC";
++//        String t="ABC";
++//        s.substring(0,3);
++//        System.out.println(minWindow(s,t));
++        HashMap<Character, Integer> map = new HashMap<>();
++        map.put('A', 1);
++        Integer b1 = map.computeIfPresent('B', (k, v) -> v + 2);
++//        Integer a = map.computeIfPresent('A', (k, v) -> v + 1);
++//        System.out.println(a);
++        System.out.println(b1);
++//        map.put('B', 2);
++//        map.put('C', 3);
++        HashMap<Character, Integer> map2 = new HashMap<>();
++        map2.put('A', 1);
++        map2.put('B', 2);
++
++        boolean b = map.entrySet().containsAll(map2.entrySet());
++        System.out.println(b);
+     }
+ 
+     static String minWindow(String s,String t){
+Index: src/main/java/com/zzm/hot100/eighty/SeventyTwo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.eighty;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.eighty\n * @Author: zzm\n * @CreateTime: 2024-02-22  00:41\n * @Description: TODO\n * @Version: 1.0\n */\n//72.编辑距离\npublic class SeventyTwo {\n\n    public int minDistance(String word1, String word2) {\n        int m = word1.length();\n        int n = word2.length();\n        int[][] dp = new int[m + 1][n + 1];\n        // 初始化\n        for (int i = 1; i <= m; i++) {\n            dp[i][0] =  i;\n        }\n        for (int j = 1; j <= n; j++) {\n            dp[0][j] = j;\n        }\n        for (int i = 1; i <= m; i++) {\n            for (int j = 1; j <= n; j++) {\n                // 因为dp数组有效位从1开始\n                // 所以当前遍历到的字符串的位置为i-1 | j-1\n                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {\n                    dp[i][j] = dp[i - 1][j - 1];\n                } else {\n                    dp[i][j] = Math.min(Math.min(dp[i - 1][j - 1], dp[i][j - 1]), dp[i - 1][j]) + 1;\n                }\n            }\n        }\n        return dp[m][n];\n    }\n\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/eighty/SeventyTwo.java b/src/main/java/com/zzm/hot100/eighty/SeventyTwo.java
+--- a/src/main/java/com/zzm/hot100/eighty/SeventyTwo.java	
++++ b/src/main/java/com/zzm/hot100/eighty/SeventyTwo.java	
+@@ -1,5 +1,7 @@
+ package com.zzm.hot100.eighty;
+ 
++import javax.print.DocFlavor;
++
+ /**
+  * @BelongsProject: leet
+  * @BelongsPackage: com.zzm.hot100.eighty
+@@ -11,6 +13,13 @@
+ //72.编辑距离
+ public class SeventyTwo {
+ 
++    public static void main(String[] args) {
++        String s = "https://s3plus.sankuai.com/mlive-operation/1714981867318applyLiveAnchor.xlsx";
++        String[] split = s.split("/");
++        System.out.println(split[split.length - 1]);
++        System.out.println(split[split.length - 2]);
++    }
++
+     public int minDistance(String word1, String word2) {
+         int m = word1.length();
+         int n = word2.length();
+Index: src/main/java/com/zzm/hot100/ninety/EightyTwo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zzm.hot100.ninety;\n\nimport com.zzm.structure.ListNode;\n\n/**\n * @BelongsProject: leet\n * @BelongsPackage: com.zzm.hot100.ninety\n * @Author: zzm\n * @CreateTime: 2024-01-25  14:39\n * @Description: TODO\n * @Version: 1.0\n */\n//82. 删除排序链表中的重复元素 II\npublic class EightyTwo {\n    public static void main(String[] args) {\n\n    }\n\n    //重复的元素一个不留\n    public ListNode deleteDuplicates(ListNode head) {\n        if(head==null||head.next==null){\n            return head;\n        }\n        if(head.val==head.next.val){\n            ListNode x=head.next.next;\n            while(x!=null&&x.val==head.val){\n                x=x.next;//不断循环向后找\n            }\n            return deleteDuplicates(x);//与p取值不同的节点\n        }else{\n            //将head.next后面的节点进行递归去重后赋值给head.next\n            head.next=deleteDuplicates(head.next);\n            return head;\n        }\n\n    }\n\n    public ListNode deleteDuplicates2(ListNode head) {\n        if(head==null||head.next==null){\n            return head;\n        }\n        ListNode s=new ListNode(-1,head);\n        ListNode p1=s;\n        ListNode p2,p3;\n        while((p2=p1.next)!=null&&(p3=p2.next)!=null){\n            if(p2.val==p3.val){\n                //需要直到p3的下一个不为null\n                while((p3=p3.next)!=null&&p2.val==p3.val){\n                }\n                p1.next=p3;\n            }else{\n                p1=p1.next;\n            }\n        }\n        return s.next;\n    }\n\n}\n
+===================================================================
+diff --git a/src/main/java/com/zzm/hot100/ninety/EightyTwo.java b/src/main/java/com/zzm/hot100/ninety/EightyTwo.java
+--- a/src/main/java/com/zzm/hot100/ninety/EightyTwo.java	
++++ b/src/main/java/com/zzm/hot100/ninety/EightyTwo.java	
+@@ -2,6 +2,8 @@
+ 
+ import com.zzm.structure.ListNode;
+ 
++import java.util.Arrays;
++
+ /**
+  * @BelongsProject: leet
+  * @BelongsPackage: com.zzm.hot100.ninety
